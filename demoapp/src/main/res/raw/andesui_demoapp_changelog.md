@@ -1,6 +1,13 @@
+# v3.5.1
+## 🛠 Fixes
+- AndesMessage contructor overload for java classes compatibility | Authors [eportasML](https://github.com/eportasML)
+
 # v3.5.0
 ### 🚀 Feature
 - AndesMessage With Thumbnnail | Authors [a0zamora](https://github.com/a0zamora)
+
+### ⚙️ Other
+- Disable bot for issues | Authors [joalonspint](https://github.com/joalonsopint)
 
 # v3.4.0
 ## 🚀 Features
@@ -122,8 +129,8 @@
 
 # v2.8.0
 ## 🚀 Features
-- AndesCard: Hierarchy primary/secondary | Author: [@ArqMobile](https://github.com/mercadolibre/fury_andesui-android)
-- AndesCard: Actions support (link) | Author: [@ArqMobile](https://github.com/mercadolibre/fury_andesui-android)
+- AndesCard: Hierarchy primary/secondary | Author: [@ArqMobile](https://github.com/mercadolibre/fury_andesui-android)
+- AndesCard: Actions support (link) | Author: [@ArqMobile](https://github.com/mercadolibre/fury_andesui-android)
 
 # v2.7.1
 ## 🚀 Features

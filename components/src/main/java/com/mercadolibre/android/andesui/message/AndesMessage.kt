@@ -141,6 +141,7 @@ class AndesMessage : CardView {
     }
 
     @Suppress("unused", "LongParameterList")
+    @JvmOverloads
     constructor(
         context: Context,
         hierarchy: AndesMessageHierarchy = HIERARCHY_DEFAULT,
