@@ -1,3 +1,7 @@
+# v3.5.1
+## 🛠 Fixes
+- AndesMessage contructor overload for java classes compatibility | Authors [eportasML](https://github.com/eportasML)
+
 # v3.5.0
 ### 🚀 Feature
 - AndesMessage With Thumbnnail | Authors [a0zamora](https://github.com/a0zamora)
