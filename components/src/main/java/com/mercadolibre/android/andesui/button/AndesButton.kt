@@ -2,18 +2,19 @@ package com.mercadolibre.android.andesui.button
 
 import android.content.Context
 import android.graphics.drawable.Animatable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import androidx.annotation.Nullable
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.appcompat.widget.AppCompatButton
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.Nullable
+import androidx.appcompat.widget.AppCompatButton
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder
 import com.facebook.drawee.controller.BaseControllerListener
 import com.facebook.drawee.controller.ControllerListener
@@ -26,6 +27,7 @@ import com.mercadolibre.android.andesui.button.factory.AndesButtonConfiguration
 import com.mercadolibre.android.andesui.button.factory.AndesButtonConfigurationFactory
 import com.mercadolibre.android.andesui.button.hierarchy.AndesButtonHierarchy
 import com.mercadolibre.android.andesui.button.hierarchy.AndesButtonIcon
+import com.mercadolibre.android.andesui.button.hierarchy.AndesButtonIconOrientation
 import com.mercadolibre.android.andesui.button.hierarchy.BackgroundColorConfig
 import com.mercadolibre.android.andesui.button.hierarchy.getConfiguredBackground
 import com.mercadolibre.android.andesui.button.size.AndesButtonSize
@@ -153,7 +155,7 @@ class AndesButton : ConstraintLayout {
         buttonIcon: AndesButtonIcon? = ICON_DEFAULT,
         buttonText: String? = TEXT_DEFAULT
     ) :
-            super(context) {
+        super(context) {
         initAttrs(buttonSize, buttonHierarchy, buttonIcon, buttonText)
     }
 
@@ -200,10 +202,10 @@ class AndesButton : ConstraintLayout {
         text: String?
     ) {
         andesButtonAttrs = AndesButtonAttrs(buttonHierarchy,
-                buttonSize,
-                buttonIcon?.leftIcon,
-                buttonIcon?.rightIcon,
-                text)
+            buttonSize,
+            buttonIcon?.leftIcon,
+            buttonIcon?.rightIcon,
+            text)
         setupComponents(createConfig())
     }
 
@@ -255,11 +257,11 @@ class AndesButton : ConstraintLayout {
         val set = ConstraintSet()
         set.clone(this)
         set.createHorizontalChain(
-                ConstraintSet.PARENT_ID, ConstraintSet.LEFT,
-                ConstraintSet.PARENT_ID, ConstraintSet.RIGHT,
-                intArrayOf(leftIconComponent.id, textComponent.id, rightIconComponent.id),
-                null,
-                ConstraintSet.CHAIN_PACKED
+            ConstraintSet.PARENT_ID, ConstraintSet.LEFT,
+            ConstraintSet.PARENT_ID, ConstraintSet.RIGHT,
+            intArrayOf(leftIconComponent.id, textComponent.id, rightIconComponent.id),
+            null,
+            ConstraintSet.CHAIN_PACKED
         )
 
         set.centerVertically(leftIconComponent.id, ConstraintSet.PARENT_ID)
@@ -439,8 +441,8 @@ class AndesButton : ConstraintLayout {
 
     internal fun changeBackgroundColor(backgroundColorConfig: BackgroundColorConfig) {
         background = getConfiguredBackground(context,
-                context.resources.getDimension(R.dimen.andes_button_border_radius_medium),
-                backgroundColorConfig)
+            context.resources.getDimension(R.dimen.andes_button_border_radius_medium),
+            backgroundColorConfig)
     }
 
     /**
@@ -477,7 +479,7 @@ class AndesButton : ConstraintLayout {
         if (!leftIconPosition) {
             icon = rightIconComponent
             andesButtonAttrs = andesButtonAttrs.copy(andesButtonLeftIconPath = null,
-                    andesButtonRightIconPath = CUSTOM_ICON_DEFAULT)
+                andesButtonRightIconPath = CUSTOM_ICON_DEFAULT)
         }
 
         val listener: ControllerListener<ImageInfo> = object : BaseControllerListener<ImageInfo>() {
@@ -491,8 +493,8 @@ class AndesButton : ConstraintLayout {
         }
 
         val controller = pipelineDraweeControllerBuilder
-                .setControllerListener(listener)
-                .build()
+            .setControllerListener(listener)
+            .build()
 
         icon.controller = controller
         icon.visibility = View.VISIBLE
@@ -517,6 +519,23 @@ class AndesButton : ConstraintLayout {
         }
 
         createConfig().also {
+            updateComponentsAlignment(it)
+        }
+    }
+
+    /**
+     * sets an icon to right or left, depending on the orientation
+     * @param drawable the drawable that is going to be shown
+     * @param orientation AndesButtonIconOrientation LEFT|RIGHT
+     */
+    fun setIconDrawable(drawable: Drawable, orientation: AndesButtonIconOrientation) {
+        andesButtonAttrs = when (orientation) {
+            AndesButtonIconOrientation.LEFT -> andesButtonAttrs.copy(andesButtonLeftDrawable = drawable)
+            AndesButtonIconOrientation.RIGHT -> andesButtonAttrs.copy(andesButtonRightDrawable = drawable)
+        }
+
+        createConfig().also {
+            updateDynamicComponents(it)
             updateComponentsAlignment(it)
         }
     }

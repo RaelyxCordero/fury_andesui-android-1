@@ -67,7 +67,7 @@ class AndesLargeButtonSizeTest {
 
     @Test
     fun `Large button icon null`() {
-        assertEquals(andesLargeButtonSize.iconConfig(hierarchy, null, null, context), null)
+        assertEquals(andesLargeButtonSize.iconConfig(hierarchy, null, null, null, null, context), null)
     }
 
     @Test
@@ -125,17 +125,17 @@ class AndesMediumButtonSizeTest {
 
     @Test
     fun `Medium button icon null`() {
-        assertNull(andesMediumButtonSize.iconConfig(hierarchy, null, null, context))
+        assertNull(andesMediumButtonSize.iconConfig(hierarchy, null, null, null, null,context))
     }
 
     @Test
     fun `Medium button left icon`() {
-        assertNull(andesMediumButtonSize.iconConfig(hierarchy, ANDES_ICON, null, context))
+        assertNull(andesMediumButtonSize.iconConfig(hierarchy, ANDES_ICON, null, null, null,context))
     }
 
     @Test
     fun `Medium button right icon`() {
-        assertNull(andesMediumButtonSize.iconConfig(hierarchy, null, ANDES_ICON, context))
+        assertNull(andesMediumButtonSize.iconConfig(hierarchy, null, ANDES_ICON, null, null,context))
     }
 }
 
@@ -182,16 +182,16 @@ class AndesSmallButtonSizeTest {
 
     @Test
     fun `Small button icon null`() {
-        assertNull(andesSmallButtonSize.iconConfig(hierarchy, null, null, context))
+        assertNull(andesSmallButtonSize.iconConfig(hierarchy, null, null, null, null,context))
     }
 
     @Test
     fun `Small button left icon`() {
-        assertNull(andesSmallButtonSize.iconConfig(hierarchy, ANDES_ICON, null, context))
+        assertNull(andesSmallButtonSize.iconConfig(hierarchy, ANDES_ICON, null, null, null,context))
     }
 
     @Test
     fun `Small button right icon`() {
-        assertNull(andesSmallButtonSize.iconConfig(hierarchy, null, ANDES_ICON, context))
+        assertNull(andesSmallButtonSize.iconConfig(hierarchy, null, ANDES_ICON, null, null,context))
     }
 }

@@ -1,6 +1,7 @@
 package com.mercadolibre.android.andesui.button.factory
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import com.mercadolibre.android.andesui.R
 import com.mercadolibre.android.andesui.button.hierarchy.AndesButtonHierarchy
@@ -16,7 +17,9 @@ internal data class AndesButtonAttrs(
     val andesButtonRightIconPath: String?,
     val andesButtonText: String?,
     val andesButtonEnabled: Boolean = true,
-    val andesButtonIsLoading: Boolean = false
+    val andesButtonIsLoading: Boolean = false,
+    val andesButtonLeftDrawable: Drawable? = null,
+    val andesButtonRightDrawable: Drawable? = null
 )
 
 /**

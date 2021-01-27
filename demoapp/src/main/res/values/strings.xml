@@ -7,6 +7,8 @@
     <string name="loud_small_loading_button">Loading Loud Small Button</string>
     <string name="loud_large_button_programmatic">Loud Large Button Programmatic</string>
     <string name="loud_medium_button_programmatic">Loud Medium Button Programmatic</string>
+    <string name="loud_with_drawable_button_programmatic_left">Loud With Drawable Left</string>
+    <string name="loud_with_drawable_button_programmatic_right">Loud With Drawable Right</string>
     <string name="loud_small_button_programmatic">Loud Small Button Programmatic disabled</string>
     <string name="loud_large_button_disabled">Loud large button disabled</string>
     <string name="loud_large_button_text_updated">This text was updated programmatically</string>

@@ -1,6 +1,8 @@
 package com.mercadolibre.android.andesui.button
 
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.facebook.common.logging.FLog
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -8,13 +10,14 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig
 import com.facebook.imagepipeline.listener.RequestListener
 import com.facebook.imagepipeline.listener.RequestLoggingListener
 import com.facebook.soloader.SoLoader
-import com.mercadolibre.android.andesui.BuildConfig
 import com.mercadolibre.android.andesui.button.hierarchy.AndesButtonHierarchy
 import com.mercadolibre.android.andesui.button.hierarchy.AndesButtonIcon
 import com.mercadolibre.android.andesui.button.hierarchy.AndesButtonIconOrientation
 import com.mercadolibre.android.andesui.button.size.AndesButtonSize
+import com.mercadolibre.android.andesui.icons.IconProvider
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.BeforeClass
@@ -113,5 +116,25 @@ class AndesButtonTest {
         assertNull(andesButton.leftIconComponent.drawable)
         assertThat(andesButton.rightIconComponent.drawable).isEqualToComparingOnlyGivenFields(icon)
         assertEquals(andesButton.isLoading, false)
+    }
+
+    @Test
+    fun `Drawable left is visible after set`() {
+        andesButton = AndesButton(context, AndesButtonSize.LARGE, AndesButtonHierarchy.TRANSPARENT, null)
+        assertEquals(andesButton.leftIconComponent.drawable, null)
+        val drawable = IconProvider(context)
+            .loadIcon("andes_ui_placeholder_imagen_24") as BitmapDrawable
+        andesButton.setIconDrawable(drawable, AndesButtonIconOrientation.LEFT)
+        assertEquals(andesButton.leftIconComponent.visibility, View.VISIBLE)
+    }
+
+    @Test
+    fun `Drawable right is visible after set`() {
+        andesButton = AndesButton(context, AndesButtonSize.LARGE, AndesButtonHierarchy.TRANSPARENT, null)
+        assertNull(andesButton.rightIconComponent.drawable)
+        val drawable = IconProvider(context)
+            .loadIcon("andes_ui_placeholder_imagen_24") as BitmapDrawable
+        andesButton.setIconDrawable(drawable, AndesButtonIconOrientation.RIGHT)
+        assertNotNull(andesButton.rightIconComponent.drawable)
     }
 }
