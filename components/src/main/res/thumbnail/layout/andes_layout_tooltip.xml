@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/andes_tooltip"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@android:color/black">
+
+  <FrameLayout
+      android:id="@+id/andes_tooltip_balloon"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      tools:background="@android:color/holo_blue_dark">
+
+    <FrameLayout
+        android:id="@+id/andes_tooltip_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        tools:background="@android:color/holo_red_dark">
+
+      <com.mercadolibre.android.andesui.tooltip.radius.RadiusLayout
+          android:id="@+id/andes_tooltip_radio_layout"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:paddingStart="16dp"
+          android:paddingBottom="16dp"
+          android:paddingEnd="10dp"
+          android:paddingTop="10dp"
+          tools:background="@android:color/darker_gray">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/andes_tooltip_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+          <TextView
+              android:id="@+id/andes_tooltip_title"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="6dp"
+              android:maxWidth="220dp"
+              app:layout_goneMarginBottom="2dp"
+              app:layout_constraintHorizontal_bias="0.0"
+              app:layout_constraintTop_toTopOf="parent"
+              app:layout_constraintLeft_toLeftOf="parent"
+              app:layout_constraintRight_toLeftOf="@id/andes_tooltip_dismiss"
+              app:layout_constraintBottom_toTopOf="@id/andes_tooltip_body"
+              tools:text="Title"
+              tools:visibility="visible"/>
+
+          <TextView
+              android:id="@+id/andes_tooltip_body"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="4dp"
+              android:maxWidth="220dp"
+              app:layout_constraintHorizontal_bias="1.0"
+              app:layout_constraintTop_toBottomOf="@id/andes_tooltip_title"
+              app:layout_constraintLeft_toLeftOf="parent"
+              tools:visibility="visible"
+              tools:text="Andes tooltip body Andes tooltip body Andes tooltip body Andes tooltip body Andes tooltip body Andes tooltip body" />
+
+          <com.facebook.drawee.view.SimpleDraweeView
+              android:id="@+id/andes_tooltip_dismiss"
+              android:layout_width="16dp"
+              android:layout_height="16dp"
+              app:actualImageResource="@drawable/andes_ui_close_20"
+              app:layout_constraintHorizontal_bias="1.0"
+              app:layout_constraintTop_toTopOf="parent"
+              app:layout_constraintLeft_toRightOf="@id/andes_tooltip_body"
+              app:layout_constraintRight_toRightOf="parent"
+              tools:visibility="visible"/>
+
+          <androidx.constraintlayout.widget.Barrier
+              android:id="@+id/buttons_barrier"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              app:constraint_referenced_ids="andes_tooltip_body"
+              app:barrierDirection="bottom"/>
+
+          <com.mercadolibre.android.andesui.button.AndesButton
+              android:id="@+id/andes_tooltip_primary_action"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="16dp"
+              android:layout_marginEnd="4dp"
+              app:andesButtonHierarchy="loud"
+              app:andesButtonSize="medium"
+              app:andesButtonText="@string/andes_button_text"
+              app:layout_constraintHorizontal_chainStyle="packed"
+              app:layout_constraintTop_toBottomOf="@+id/buttons_barrier"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintLeft_toLeftOf="parent"
+              app:layout_constraintRight_toLeftOf="@id/andes_tooltip_secondary_action"
+              app:layout_constraintHorizontal_bias="0.0"
+              app:layout_constraintVertical_bias="1.0"
+              tools:visibility="visible"/>
+
+          <com.mercadolibre.android.andesui.button.AndesButton
+              android:id="@+id/andes_tooltip_secondary_action"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="16dp"
+              app:andesButtonHierarchy="quiet"
+              app:andesButtonSize="medium"
+              app:andesButtonText="@string/andes_button_text"
+              app:layout_constraintHorizontal_bias="0.0"
+              app:layout_constraintTop_toBottomOf="@+id/buttons_barrier"
+              app:layout_constraintLeft_toRightOf="@id/andes_tooltip_primary_action"
+              app:layout_constraintRight_toRightOf="parent"
+              tools:visibility="visible"/>
+
+          <TextView
+              android:id="@+id/andes_tooltip_link_action"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="8dp"
+              android:textColor="@color/andes_accent_color_500"
+              app:layout_constraintLeft_toLeftOf="parent"
+              app:layout_constraintTop_toBottomOf="@+id/andes_tooltip_body"
+              tools:text="Link action"
+              tools:visibility="visible"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+      </com.mercadolibre.android.andesui.tooltip.radius.RadiusLayout>
+
+    </FrameLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/andes_tooltip_arrow"
+        android:layout_width="16dp"
+        android:layout_height="10dp"
+        android:rotation="180"
+        android:scaleType="fitEnd"
+        app:srcCompat="@drawable/andes_tooltip_arrow_with_shadow_vpp" />
+  </FrameLayout>
+
+
+
+</FrameLayout>

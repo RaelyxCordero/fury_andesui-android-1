@@ -289,6 +289,21 @@
                     android:scheme="meli" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".feature.TooltipShowcaseActivity"
+            android:parentActivityName=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="andes"
+                    android:path="/tooltip"
+                    android:scheme="meli" />
+            </intent-filter>
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

@@ -248,6 +248,18 @@
             app:andesButtonText="@string/andesui_demoapp_thumbnail"
             app:layout_constraintTop_toBottomOf="@id/andesui_textfield" />
 
+        <com.mercadolibre.android.andesui.button.AndesButton
+            android:id="@+id/andesui_tooltip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/button_margin_vertical"
+            android:layout_marginTop="@dimen/button_margin_vertical"
+            android:layout_marginRight="@dimen/button_margin_vertical"
+            app:andesButtonHierarchy="loud"
+            app:andesButtonSize="large"
+            app:andesButtonText="@string/andes_tooltip_showcase"
+            app:layout_constraintTop_toBottomOf="@id/andesui_thumbnail" />
+
 
         <TextView
             android:id="@+id/andesui_demoapp_label_more"
@@ -258,7 +270,7 @@
             android:layout_marginRight="@dimen/button_margin_vertical"
             android:text="@string/andesui_demoapp_label_more"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/andesui_thumbnail" />
+            app:layout_constraintTop_toBottomOf="@id/andesui_tooltip" />
 
         <com.mercadolibre.android.andesui.button.AndesButton
             android:id="@+id/andesui_demoapp_contribution"

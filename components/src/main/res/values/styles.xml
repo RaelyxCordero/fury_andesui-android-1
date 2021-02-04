@@ -75,4 +75,9 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <style name="Andes.FadeWindowAnimation">
+        <item name="android:windowEnterAnimation">@anim/andes_tooltip_fade_in_anim</item>
+        <item name="android:windowExitAnimation">@anim/andes_tooltip_fade_out_anim</item>
+    </style>
+
 </resources>

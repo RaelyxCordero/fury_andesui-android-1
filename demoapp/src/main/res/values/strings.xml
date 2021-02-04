@@ -1,4 +1,7 @@
 <resources>
+    <string name="tooltip_trigger_button">Show tooltip</string>
+
+
     <string name="loud_large_button">Loud Large Button</string>
     <string name="loud_medium_button">Loud Medium Button</string>
     <string name="loud_small_button">Loud Small Button</string>
@@ -71,6 +74,7 @@
     <string name="dropdown_standalone_description">They apply anywhere on the interface. By default they show a selected option and do not allow it to be empty. There are 3 sizes.</string>
 
 
+    <string name="andesui_demoapp_screen_tooltip">Andes UI: Tooltip</string>
     <string name="andesui_demoapp_screen_button">Andes UI: Button</string>
     <string name="andesui_demoapp_screen_bottom_sheet">Andes UI: Bottom Sheet</string>
     <string name="andesui_demoapp_screen_message">Andes UI: Message</string>
@@ -124,6 +128,7 @@
     <string name="andes_choice_tag_showcase">Choice tag</string>
     <string name="andes_snackbar_showcase">Andes Snackbar</string>
     <string name="andes_badge_showcase">Andes Badge</string>
+    <string name="andes_tooltip_showcase">Andes Tooltip</string>
     <string name="andes_badges_pill">Pill</string>
     <string name="andes_badges_other">Other cases</string>
     <string name="andes_badges_dot">Dot</string>
