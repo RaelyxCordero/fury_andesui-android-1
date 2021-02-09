@@ -35,8 +35,17 @@ internal fun View.getStatusBarHeight(isStatusBarVisible: Boolean): Int {
 internal fun View.getActionBarHeight(): Int {
   if (context is AppCompatActivity){
     (context as AppCompatActivity).supportActionBar?.let {
-      if (isShown){ return it.height }
+      if (it.isShowing){ return it.height }
     }
   }
   return 0
+}
+
+internal fun View.isActionBarVisible(): Boolean {
+  if (context is AppCompatActivity){
+    (context as AppCompatActivity).supportActionBar?.let {
+      return it.isShowing
+    }
+  }
+  return false
 }

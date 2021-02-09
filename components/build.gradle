@@ -15,6 +15,7 @@ android {
         minSdkVersion minApiLevel
         targetSdkVersion maxApiLevel
 
+        vectorDrawables.useSupportLibrary = true
         consumerProguardFiles 'proguard-rules.pro'
     }
 

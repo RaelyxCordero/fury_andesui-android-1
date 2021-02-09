@@ -15,7 +15,7 @@ import com.mercadolibre.android.andesui.tooltip.AndesTooltip
 import com.mercadolibre.android.andesui.tooltip.actions.AndesTooltipAction
 import com.mercadolibre.android.andesui.tooltip.actions.AndesTooltipLinkAction
 import com.mercadolibre.android.andesui.tooltip.style.AndesTooltipStyle
-import com.mercadolibre.android.andesui.tooltip.AndesTooltipTipOrientation
+import com.mercadolibre.android.andesui.tooltip.AndesTooltipLocation
 import kotlinx.android.synthetic.main.andesui_tooltip_light_showcase.view.*
 
 class TooltipShowcaseActivity : AppCompatActivity() {
@@ -41,29 +41,26 @@ class TooltipShowcaseActivity : AppCompatActivity() {
                 context = this,
                 style = AndesTooltipStyle.LIGHT,
                 title = "My tooltip title",
-                body = resources.getString(R.string.body_text),
-                tipOrientation = AndesTooltipTipOrientation.LEFT,
-                mainAction = AndesTooltipAction(resources.getString(R.string.andes_card_link), AndesButtonHierarchy.LOUD){ _, tooltip ->
-                    tooltip.dismiss()
-                }
+                body = "kajndxwdjnce",
+                tooltipLocation = AndesTooltipLocation.LEFT
         )
 
         container.andes_trigger_tooltip_centered.setOnClickListener {
-            andesTooltipMainAction2.showAlignRight(it)
+            andesTooltipMainAction2.show(it)
         }
         val andesTooltipMainAction = AndesTooltip(
                 context = this,
                 style = AndesTooltipStyle.LIGHT,
                 title = "My tooltip title",
                 body = resources.getString(R.string.body_text),
-                tipOrientation = AndesTooltipTipOrientation.LEFT,
+                tooltipLocation = AndesTooltipLocation.TOP,
                 mainAction = AndesTooltipAction(resources.getString(R.string.andes_card_link), AndesButtonHierarchy.LOUD){ _, tooltip ->
                     tooltip.dismiss()
                 }
         )
 
         container.andes_trigger_tooltip_top_left.setOnClickListener {
-            andesTooltipMainAction.showAlignRight(it)
+            andesTooltipMainAction.show(it)
         }
 
         val andesTooltipMainPlusSecondaryAction = AndesTooltip(
@@ -71,7 +68,7 @@ class TooltipShowcaseActivity : AppCompatActivity() {
                 style = AndesTooltipStyle.LIGHT,
                 title = "My tooltip title",
                 body = resources.getString(R.string.body_text),
-                tipOrientation = AndesTooltipTipOrientation.RIGHT,
+                tooltipLocation = AndesTooltipLocation.LEFT,
                 mainAction = AndesTooltipAction(resources.getString(R.string.andes_button_text), AndesButtonHierarchy.LOUD){ _, tooltip ->
                     tooltip.dismiss()
                 },
@@ -82,7 +79,7 @@ class TooltipShowcaseActivity : AppCompatActivity() {
 
 
         container.andes_trigger_tooltip_top_right.setOnClickListener {
-            andesTooltipMainPlusSecondaryAction.showAlignLeft(it)
+            andesTooltipMainPlusSecondaryAction.show(it)
         }
 
         val andesTooltipLink = AndesTooltip(
@@ -90,14 +87,14 @@ class TooltipShowcaseActivity : AppCompatActivity() {
                 style = AndesTooltipStyle.LIGHT,
                 title = "My tooltip title",
                 body = resources.getString(R.string.body_text),
-                tipOrientation = AndesTooltipTipOrientation.LEFT,
+                tooltipLocation = AndesTooltipLocation.RIGHT,
                 linkAction = AndesTooltipLinkAction(resources.getString(R.string.andes_card_link)){ _, tooltip ->
                     tooltip.dismiss()
                 }
         )
 
         container.andes_trigger_tooltip_left.setOnClickListener {
-            andesTooltipLink.showAlignRight(it)
+            andesTooltipLink.show(it)
         }
 
         val andesTooltipNoAction = AndesTooltip(
@@ -105,30 +102,42 @@ class TooltipShowcaseActivity : AppCompatActivity() {
                 style = AndesTooltipStyle.LIGHT,
                 title = "My tooltip title",
                 body = resources.getString(R.string.body_text),
-                tipOrientation = AndesTooltipTipOrientation.RIGHT
+                tooltipLocation = AndesTooltipLocation.LEFT
         )
         container.andes_trigger_tooltip_right.setOnClickListener {
-            andesTooltipNoAction.showAlignLeft(it)
+            andesTooltipNoAction.show(it)
         }
 
         val andesTooltipJustBody = AndesTooltip(
                 context = this,
                 style = AndesTooltipStyle.LIGHT,
                 body = resources.getString(R.string.body_text),
-                tipOrientation = AndesTooltipTipOrientation.BOTTOM
+                tooltipLocation = AndesTooltipLocation.BOTTOM
         )
         container.andes_trigger_tooltip_bottom_left.setOnClickListener {
-            andesTooltipJustBody.showAlignTop(it)
+            andesTooltipJustBody.show(it)
         }
 
         val andesTooltipJustBody2 = AndesTooltip(
                 context = this,
                 style = AndesTooltipStyle.LIGHT,
                 body = resources.getString(R.string.body_text),
-                tipOrientation = AndesTooltipTipOrientation.TOP
+                tooltipLocation = AndesTooltipLocation.BOTTOM,
+                isDismissible = false
+        )
+
+        val andesTooltipJustBody3 = AndesTooltip(
+                context = this,
+                style = AndesTooltipStyle.LIGHT,
+                title = "My tooltip title",
+                body = resources.getString(R.string.body_text),
+                tooltipLocation = AndesTooltipLocation.LEFT,
+                mainAction = AndesTooltipAction(resources.getString(R.string.andes_card_link), AndesButtonHierarchy.LOUD){ _, tooltip ->
+                    tooltip.dismiss()
+                }
         )
         container.andes_trigger_tooltip_bottom_right.setOnClickListener {
-            andesTooltipJustBody2.showAlignBottom(it)
+            andesTooltipJustBody3.show(it)
         }
 
     }

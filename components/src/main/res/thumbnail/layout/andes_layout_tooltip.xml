@@ -133,11 +133,10 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/andes_tooltip_arrow"
-        android:layout_width="16dp"
-        android:layout_height="10dp"
-        android:rotation="180"
+        android:layout_width="20dp"
+        android:layout_height="14dp"
         android:scaleType="fitEnd"
-        app:srcCompat="@drawable/andes_tooltip_arrow_with_shadow_vpp" />
+        app:srcCompat="@drawable/andes_tooltip_arrow_svg" />
   </FrameLayout>
 
 
