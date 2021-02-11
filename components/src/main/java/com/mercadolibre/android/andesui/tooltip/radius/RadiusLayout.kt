@@ -6,8 +6,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.widget.FrameLayout
-import androidx.annotation.Px
-import com.mercadolibre.android.andesui.tooltip.extensions.dp2Px
+import com.mercadolibre.android.andesui.R
 
 class RadiusLayout @JvmOverloads constructor(
     context: Context,
@@ -16,17 +15,11 @@ class RadiusLayout @JvmOverloads constructor(
 ) : FrameLayout(context, attr, defStyle) {
 
   private val path = Path()
-
-  @Px private var _radius: Float = 0f
-  var radius: Float
-    @Px get() = _radius
-    set(dpValue) {
-      _radius = context.dp2Px(dpValue)
-      invalidate()
-    }
+  private val radius = context.resources.getDimensionPixelOffset(R.dimen.andes_tooltip_corner_radius).toFloat()
 
   override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
     super.onSizeChanged(w, h, oldw, oldh)
+
     path.apply {
       addRoundRect(
         RectF(0f, 0f, w.toFloat(), h.toFloat()),

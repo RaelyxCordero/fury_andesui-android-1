@@ -1,14 +1,13 @@
-package com.mercadolibre.android.andesui.tooltip
+package com.mercadolibre.android.andesui.tooltip.location
 
 import android.view.View
-import com.mercadolibre.android.andesui.tooltip.extensions.dp2Px
 import com.mercadolibre.android.andesui.tooltip.extensions.getArrowPositionX
 import com.mercadolibre.android.andesui.tooltip.extensions.getArrowPositionY
 import com.mercadolibre.android.andesui.tooltip.extensions.getSpaceConditionByLocation
 import com.mercadolibre.android.andesui.tooltip.extensions.getTooltipXOff
 import com.mercadolibre.android.andesui.tooltip.extensions.getTooltipYOff
-import java.lang.ref.WeakReference
 
+data class AndesTooltipArrowData(val position: AndesTooltipArrowPosition, val point: Int)
 data class AndesTooltipArrowPoint(val x: Float, val y: Float)
 data class AndesTooltipPadding(val left: Int, val top: Int, val right: Int, val bottom: Int)
 
@@ -16,14 +15,7 @@ sealed class AndesTooltipLocationConfig(
         val mLocation: AndesTooltipLocation,
         val otherLocationsAttempts : List<AndesTooltipLocation>
 ){
-    var weakTooltip: AndesTooltip?
-        get() = tooltip?.get()
-        set(value) {
-            value?.let { tooltip = WeakReference(value) }
-        }
-
-    private var tooltip: WeakReference<AndesTooltip>? = null
-
+    protected lateinit var arrowPosition: AndesTooltipArrowPosition
     abstract fun buildTooltipInRequiredLocation(target: View): Boolean
     abstract fun iterateOtherLocations(target: View): Boolean
     abstract fun getTooltipPadding(): AndesTooltipPadding
@@ -31,28 +23,27 @@ sealed class AndesTooltipLocationConfig(
     abstract fun getArrowRotation(): Float
 }
 
-class TopAndesTooltipLocationConfig(andesTooltip: AndesTooltip): AndesTooltipLocationConfig(
+class TopAndesTooltipLocationConfig(private val andesTooltip: AndesTooltipLocationInterface): AndesTooltipLocationConfig(
         mLocation = AndesTooltipLocation.TOP,
         otherLocationsAttempts = listOf(AndesTooltipLocation.BOTTOM, AndesTooltipLocation.LEFT, AndesTooltipLocation.RIGHT)
 ){
-    init {
-        weakTooltip = andesTooltip
-    }
+
     override fun buildTooltipInRequiredLocation(target: View): Boolean {
-        weakTooltip?.run {
+        andesTooltip.run {
             if (mLocation.getSpaceConditionByLocation().invoke(this, target)){
-                val xOff = getTooltipXOff(target)
-                val yOff = -getMeasuredHeight() - target.measuredHeight
-                showDropDown(target, xOff, yOff, mLocation)
+                val arrowData = getTooltipXOff(target, this)
+                arrowPosition = arrowData.position
+                val xOff = arrowData.point
+                val yOff = -tooltipMeasuredHeight - target.measuredHeight
+                showDropDown(target, xOff, yOff, this@TopAndesTooltipLocationConfig)
                 return true
             }
             return false
         }
-        return false
     }
 
     override fun iterateOtherLocations(target: View): Boolean {
-        weakTooltip?.run {
+        andesTooltip.run {
             otherLocationsAttempts.forEach { location ->
                 if (location.getSpaceConditionByLocation().invoke(this, target)){
                     return getAndesTooltipLocationConfig(this, location).buildTooltipInRequiredLocation(target)
@@ -60,59 +51,48 @@ class TopAndesTooltipLocationConfig(andesTooltip: AndesTooltip): AndesTooltipLoc
             }
             return false
         }
-        return false
     }
 
     override fun getTooltipPadding(): AndesTooltipPadding {
-        weakTooltip?.apply {
-            val paddingSize = ARROW_SIZE.toInt() + context.dp2Px(3)
-            val elevation = ELEVATION.toInt()
+        andesTooltip.apply {
+            val paddingSize = paddingWithArrow
+            val elevation = elevation
             return AndesTooltipPadding(elevation, elevation, elevation, paddingSize)
         }
-        return AndesTooltipPadding(0,0,0,0)
     }
 
     override fun getArrowPoint(): AndesTooltipArrowPoint {
-        weakTooltip?.run {
+        andesTooltip.run {
             return AndesTooltipArrowPoint(
-                    x = getArrowPositionX(frameLayoutContainer.width),
-                    y = frameLayoutContainer.y + radiusLayout.height - ELEVATION
+                    x = getArrowPositionX(frameLayoutContainer.width, this, arrowPosition),
+                    y = frameLayoutContainer.y + radiusLayout.height - elevation
             )
         }
-        return AndesTooltipArrowPoint(0F,0F)
     }
 
-    override fun getArrowRotation(): Float {
-        weakTooltip?.run {
-            return 0F
-        }
-        return 0F
-    }
-
+    override fun getArrowRotation() = 0F
 }
 
-class BottomAndesTooltipLocationConfig(andesTooltip: AndesTooltip): AndesTooltipLocationConfig(
+class BottomAndesTooltipLocationConfig(private val andesTooltip: AndesTooltipLocationInterface): AndesTooltipLocationConfig(
         mLocation = AndesTooltipLocation.BOTTOM,
         otherLocationsAttempts = listOf(AndesTooltipLocation.TOP, AndesTooltipLocation.LEFT, AndesTooltipLocation.RIGHT)
 ){
-    init {
-        weakTooltip = andesTooltip
-    }
     override fun buildTooltipInRequiredLocation(target: View): Boolean {
-        weakTooltip?.run {
+        andesTooltip.run {
             if (mLocation.getSpaceConditionByLocation().invoke(this, target)){
-                val xOff = getTooltipXOff(target)
+                val arrowData = getTooltipXOff(target, this)
+                arrowPosition = arrowData.position
+                val xOff = arrowData.point
                 val yOff = 0
-                showDropDown(target, xOff, yOff, mLocation)
+                showDropDown(target, xOff, yOff, this@BottomAndesTooltipLocationConfig)
                 return true
             }
             return false
         }
-        return false
     }
 
     override fun iterateOtherLocations(target: View): Boolean {
-        weakTooltip?.run {
+        andesTooltip.run {
             otherLocationsAttempts.forEach { location ->
                 if (location.getSpaceConditionByLocation().invoke(this, target)){
                     return getAndesTooltipLocationConfig(this, location).buildTooltipInRequiredLocation(target)
@@ -120,59 +100,48 @@ class BottomAndesTooltipLocationConfig(andesTooltip: AndesTooltip): AndesTooltip
             }
             return false
         }
-        return false
     }
 
     override fun getTooltipPadding(): AndesTooltipPadding {
-        weakTooltip?.apply {
-            val paddingSize = ARROW_SIZE.toInt() + context.dp2Px(3)
-            val elevation = ELEVATION.toInt()
+        andesTooltip.apply {
+            val paddingSize = paddingWithArrow
+            val elevation = elevation
             return AndesTooltipPadding(elevation, paddingSize, elevation, elevation)
         }
-        return AndesTooltipPadding(0,0,0,0)
     }
 
     override fun getArrowPoint(): AndesTooltipArrowPoint {
-        weakTooltip?.run {
+        andesTooltip.run {
             return AndesTooltipArrowPoint(
-                    x = getArrowPositionX(frameLayoutContainer.width),
-                    y = radiusLayout.y - ARROW_SIZE
+                    x = getArrowPositionX(frameLayoutContainer.width, this, arrowPosition),
+                    y = radiusLayout.y - arrowBorder
             )
         }
-        return AndesTooltipArrowPoint(0F,0F)
     }
 
-    override fun getArrowRotation(): Float {
-        weakTooltip?.run {
-            return 180F
-        }
-        return 0F
-    }
-
+    override fun getArrowRotation() = 180F
 }
 
-class LeftAndesTooltipLocationConfig(andesTooltip: AndesTooltip): AndesTooltipLocationConfig(
+class LeftAndesTooltipLocationConfig(private val andesTooltip: AndesTooltipLocationInterface): AndesTooltipLocationConfig(
         mLocation = AndesTooltipLocation.LEFT,
         otherLocationsAttempts = listOf(AndesTooltipLocation.RIGHT, AndesTooltipLocation.TOP, AndesTooltipLocation.BOTTOM)
 ){
-    init {
-        weakTooltip = andesTooltip
-    }
     override fun buildTooltipInRequiredLocation(target: View): Boolean {
-        weakTooltip?.run {
+        andesTooltip.run {
             if (mLocation.getSpaceConditionByLocation().invoke(this, target)){
-                val xOff = -(getMeasuredWidth())
-                val yOff = getTooltipYOff(target)
-                showDropDown(target, xOff, yOff, mLocation)
+                val arrowData = getTooltipYOff(target, this)
+                arrowPosition = arrowData.position
+                val yOff = arrowData.point
+                val xOff = -(tooltipMeasuredWidth)
+                showDropDown(target, xOff, yOff, this@LeftAndesTooltipLocationConfig)
                 return true
             }
             return false
         }
-        return false
     }
 
     override fun iterateOtherLocations(target: View): Boolean {
-        weakTooltip?.run {
+        andesTooltip.run {
             otherLocationsAttempts.forEach { location ->
                 if (location.getSpaceConditionByLocation().invoke(this, target)){
                     return getAndesTooltipLocationConfig(this, location).buildTooltipInRequiredLocation(target)
@@ -180,59 +149,49 @@ class LeftAndesTooltipLocationConfig(andesTooltip: AndesTooltip): AndesTooltipLo
             }
             return false
         }
-        return false
     }
 
     override fun getTooltipPadding(): AndesTooltipPadding {
-        weakTooltip?.apply {
-            val paddingSize = ARROW_SIZE.toInt() + context.dp2Px(3)
-            val elevation = ELEVATION.toInt()
+        andesTooltip.apply {
+            val paddingSize = paddingWithArrow
+            val elevation = elevation
             return AndesTooltipPadding(elevation, elevation, paddingSize, elevation)
         }
-        return AndesTooltipPadding(0,0,0,0)
     }
 
     override fun getArrowPoint(): AndesTooltipArrowPoint {
-        weakTooltip?.run {
+        andesTooltip.run {
             return AndesTooltipArrowPoint(
-                    x = frameLayoutContainer.x + radiusLayout.width - ELEVATION - context.dp2Px(2F), //image inner padding
-                    y = getArrowPositionY(frameLayoutContainer.height)
+                    x = frameLayoutContainer.x + radiusLayout.width - elevation - arrowImageInnerPadding,
+                    y = getArrowPositionY(frameLayoutContainer.height, this, arrowPosition)
             )
         }
-        return AndesTooltipArrowPoint(0F,0F)
     }
 
-    override fun getArrowRotation(): Float {
-        weakTooltip?.run {
-            return -90F
-        }
-        return 0F
-    }
+    override fun getArrowRotation() = -90F
 
 }
 
-class RightAndesTooltipLocationConfig(andesTooltip: AndesTooltip): AndesTooltipLocationConfig(
+class RightAndesTooltipLocationConfig(private val andesTooltip: AndesTooltipLocationInterface): AndesTooltipLocationConfig(
         mLocation = AndesTooltipLocation.RIGHT,
         otherLocationsAttempts = listOf(AndesTooltipLocation.LEFT, AndesTooltipLocation.TOP, AndesTooltipLocation.BOTTOM)
 ){
-    init {
-        weakTooltip = andesTooltip
-    }
     override fun buildTooltipInRequiredLocation(target: View): Boolean {
-        weakTooltip?.run {
+        andesTooltip.run {
             if (mLocation.getSpaceConditionByLocation().invoke(this, target)){
+                val arrowData = getTooltipYOff(target, this)
+                arrowPosition = arrowData.position
+                val yOff = arrowData.point
                 val xOff = target.measuredWidth
-                val yOff = getTooltipYOff(target)
-                showDropDown(target, xOff, yOff, mLocation)
+                showDropDown(target, xOff, yOff, this@RightAndesTooltipLocationConfig)
                 return true
             }
             return false
         }
-        return false
     }
 
     override fun iterateOtherLocations(target: View): Boolean {
-        weakTooltip?.run {
+        andesTooltip.run {
             otherLocationsAttempts.forEach { location ->
                 if (location.getSpaceConditionByLocation().invoke(this, target)){
                     return getAndesTooltipLocationConfig(this, location).buildTooltipInRequiredLocation(target)
@@ -240,39 +199,29 @@ class RightAndesTooltipLocationConfig(andesTooltip: AndesTooltip): AndesTooltipL
             }
             return false
         }
-        return false
     }
 
     override fun getTooltipPadding(): AndesTooltipPadding {
-        weakTooltip?.apply {
-            val paddingSize = ARROW_SIZE.toInt() + context.dp2Px(3)
-            val elevation = ELEVATION.toInt()
+        andesTooltip.apply {
+            val paddingSize = paddingWithArrow
+            val elevation = elevation
             return AndesTooltipPadding(paddingSize, elevation, elevation, elevation)
         }
-        return AndesTooltipPadding(0,0,0,0)
     }
 
     override fun getArrowPoint(): AndesTooltipArrowPoint {
-        weakTooltip?.run {
+        andesTooltip.run {
             return AndesTooltipArrowPoint(
                     x = frameLayoutContainer.x,
-                    y = getArrowPositionY(frameLayoutContainer.height)
+                    y = getArrowPositionY(frameLayoutContainer.height, this, arrowPosition)
             )
         }
-        return AndesTooltipArrowPoint(0F,0F)
     }
 
-    override fun getArrowRotation(): Float {
-        weakTooltip?.run {
-            return 90F
-        }
-        return 0F
-    }
-
+    override fun getArrowRotation() = 90F
 }
 
-fun getAndesTooltipLocationConfig(tooltip: AndesTooltip, location: AndesTooltipLocation): AndesTooltipLocationConfig {
-
+fun getAndesTooltipLocationConfig(tooltip: AndesTooltipLocationInterface, location: AndesTooltipLocation): AndesTooltipLocationConfig {
     return when (location) {
         AndesTooltipLocation.TOP -> TopAndesTooltipLocationConfig(tooltip)
         AndesTooltipLocation.BOTTOM -> BottomAndesTooltipLocationConfig(tooltip)

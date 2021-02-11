@@ -33,24 +33,20 @@ import com.mercadolibre.android.andesui.tooltip.factory.AndesTooltipConfiguratio
 import com.mercadolibre.android.andesui.tooltip.factory.AndesTooltipConfigurationFactory
 import com.mercadolibre.android.andesui.tooltip.style.AndesTooltipStyle
 import com.mercadolibre.android.andesui.tooltip.extensions.displaySize
-import com.mercadolibre.android.andesui.tooltip.extensions.dp2Px
 import com.mercadolibre.android.andesui.tooltip.extensions.isFinishing
 import com.mercadolibre.android.andesui.tooltip.extensions.visible
+import com.mercadolibre.android.andesui.tooltip.location.AndesTooltipLocation
+import com.mercadolibre.android.andesui.tooltip.location.AndesTooltipLocationConfig
+import com.mercadolibre.android.andesui.tooltip.location.AndesTooltipLocationInterface
+import com.mercadolibre.android.andesui.tooltip.location.getAndesTooltipLocationConfig
 import com.mercadolibre.android.andesui.tooltip.radius.RadiusLayout
 import com.mercadolibre.android.andesui.typeface.getFontOrDefault
 
-class AndesTooltip(val context: Context): LifecycleObserver {
-
-    /*var tooltipLocation: AndesTooltipLocation
-        get() = andesTooltipAttrs.tooltipLocation
-        set(value) {
-            andesTooltipAttrs = andesTooltipAttrs.copy(tooltipLocation = value)
-        }*/
+class AndesTooltip(val context: Context): LifecycleObserver, AndesTooltipLocationInterface {
 
     private lateinit var andesTooltipAttrs: AndesTooltipAttrs
     private lateinit var andesTooltipLocationConfigRequired: AndesTooltipLocationConfig
-    internal lateinit var radiusLayout: RadiusLayout
-    internal lateinit var frameLayoutContainer: FrameLayout
+
     private lateinit var constraintContainer: ConstraintLayout
     private lateinit var titleComponent: TextView
     private lateinit var bodyComponent: TextView
@@ -59,19 +55,12 @@ class AndesTooltip(val context: Context): LifecycleObserver {
     private lateinit var secondaryActionComponent: AndesButton
     private lateinit var linkActionComponent: TextView
     private lateinit var arrowComponent: AppCompatImageView
-    internal lateinit var arrowPosition: AndesTooltipArrowPosition //TODO add to attrs
+
     private val bodyWindow: PopupWindow
     private var lifecycleOwner: LifecycleOwner? = null
     private var isShowing = false
     private var destroyed: Boolean = false
 
-    internal val ARROW_SIZE = context.dp2Px(10F)
-    internal val ARROW_WIDTH = context.dp2Px(20)
-    internal val ARROW_HEIGHT = context.dp2Px(14)
-    internal val TOOLTIP_ARROW_BORDER = context.dp2Px(10F)
-    internal val ELEVATION = context.dp2Px(2F)
-    private val CORNER_RADIUS = context.dp2Px(4f)
-    private val ALPHA: Float = 1F
 
     private val container: AndesLayoutTooltipBinding =
             AndesLayoutTooltipBinding.inflate(LayoutInflater.from(context), null, false)
@@ -86,6 +75,7 @@ class AndesTooltip(val context: Context): LifecycleObserver {
         adjustFitsSystemWindows(container.root)
     }
 
+    @JvmOverloads
     constructor(context: Context,
                 style: AndesTooltipStyle = STYLE_DEFAULT,
                 title: String? = TITLE_DEFAULT,
@@ -129,7 +119,54 @@ class AndesTooltip(val context: Context): LifecycleObserver {
         initComponents(andesTooltipAttrs)
     }
 
+    @MainThread
+    fun show(target: View) {
+        if (!isShowing && !destroyed && !context.isFinishing() && ViewCompat.isAttachedToWindow(target)) {
+            target.post {
+                container.root.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+                bodyWindow.width = tooltipMeasuredWidth
+                bodyWindow.height = tooltipMeasuredHeight
+                constraintContainer.layoutParams = FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                )
 
+                if (!andesTooltipLocationConfigRequired.buildTooltipInRequiredLocation(target)){
+                    andesTooltipLocationConfigRequired.iterateOtherLocations(target)
+                }
+
+            }
+        }
+    }
+
+    fun dismiss() {
+        if (this.isShowing) {
+            this.isShowing = false
+            this.bodyWindow.dismiss()
+        }
+    }
+
+    fun setOnAndesTooltipDismissListener(callback: (()->Unit)? = null) {
+        this.bodyWindow.setOnDismissListener {
+            this@AndesTooltip.dismiss()
+            callback?.invoke()
+        }
+    }
+
+    fun setOnAndesTooltipOutsideTouchListener(callback: (()->Unit)? = null) {
+        this.bodyWindow.setTouchInterceptor(
+                object : View.OnTouchListener {
+                    override fun onTouch(view: View, event: MotionEvent): Boolean {
+                        if (event.action == MotionEvent.ACTION_OUTSIDE) {
+                            this@AndesTooltip.dismiss()
+                            callback?.invoke()
+                            return true
+                        }
+                        return false
+                    }
+                }
+        )
+    }
 
     private fun initComponents(attrs: AndesTooltipAttrs){
         radiusLayout = container.andesTooltipRadioLayout
@@ -179,11 +216,11 @@ class AndesTooltip(val context: Context): LifecycleObserver {
 
     private fun initializeArrow(locationConfig: AndesTooltipLocationConfig) {
         with(arrowComponent) {
-            layoutParams = FrameLayout.LayoutParams(ARROW_WIDTH, ARROW_HEIGHT)
+            layoutParams = FrameLayout.LayoutParams(arrowWidth, arrowHeight)
             rotation = locationConfig.getArrowRotation()
-            alpha = ALPHA
+            alpha = context.resources.getDimensionPixelOffset(R.dimen.andes_tooltip_alpha).toFloat()
             radiusLayout.post {
-                ViewCompat.setElevation(this, ELEVATION)
+                ViewCompat.setElevation(this, this@AndesTooltip.elevation.toFloat())
                 val arrowPoint = locationConfig.getArrowPoint()
                 x = arrowPoint.x
                 y = arrowPoint.y
@@ -193,13 +230,12 @@ class AndesTooltip(val context: Context): LifecycleObserver {
 
     private fun initializeBackground(config: AndesTooltipConfiguration) {
         with(radiusLayout) {
-            alpha = ALPHA
-            ViewCompat.setElevation(this, ELEVATION)
+            alpha = context.resources.getDimensionPixelOffset(R.dimen.andes_tooltip_alpha).toFloat()
+            ViewCompat.setElevation(this, this@AndesTooltip.elevation.toFloat())
             background = GradientDrawable().apply {
                 setColor(config.backgroundColor.colorInt(context))
-                cornerRadius = CORNER_RADIUS
+                cornerRadius = context.resources.getDimensionPixelOffset(R.dimen.andes_tooltip_corner_radius).toFloat()
             }
-            radius = CORNER_RADIUS
         }
     }
 
@@ -208,7 +244,7 @@ class AndesTooltip(val context: Context): LifecycleObserver {
             isOutsideTouchable = true
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                elevation = ELEVATION
+                elevation = this@AndesTooltip.elevation.toFloat()
             }
             isClippingEnabled = false
         }
@@ -318,100 +354,71 @@ class AndesTooltip(val context: Context): LifecycleObserver {
         bodyWindow.animationStyle = R.style.Andes_FadeWindowAnimation
     }
 
-    @MainThread
-    private inline fun initializeBeforeShow(target: View, crossinline block: () -> Unit) {
-        if (!isShowing && !destroyed && !context.isFinishing() && ViewCompat.isAttachedToWindow(target)) {
-
-            target.post {
-                container.root.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
-                bodyWindow.width = getMeasuredWidth()
-                bodyWindow.height = getMeasuredHeight()
-                constraintContainer.layoutParams = FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.MATCH_PARENT
-                )
-                block()
-            }
-        }
-    }
-
-    fun show(target: View) {
-        initializeBeforeShow(target) {
-            if (!andesTooltipLocationConfigRequired.buildTooltipInRequiredLocation(target)){
-                andesTooltipLocationConfigRequired.iterateOtherLocations(target)
-            }
-        }
-    }
-
-    internal fun getBodyWindowHeight() = bodyWindow.height
-    internal fun getBodyWindowWidth() = bodyWindow.width
-
-    internal fun showDropDown(target: View, xOff: Int, yOff: Int, finalLocation: AndesTooltipLocation){
-        this.isShowing = true
-        bodyWindow.showAsDropDown(target, xOff, yOff)
-
-        val newAttrs = andesTooltipAttrs.copy(tooltipLocation = finalLocation)
-        val config = AndesTooltipConfigurationFactory.create(context, newAttrs)
-        val locationConfig = getAndesTooltipLocationConfig(this, finalLocation)
-
-        initializeArrow(locationConfig)
-        setupComponents(config, locationConfig)
-        applyAndesTooltipAnimation()
-    }
-
-    fun dismiss() {
-        if (this.isShowing) {
-            this.isShowing = false
-            this.bodyWindow.dismiss()
-        }
-    }
-
-    fun setOnAndesTooltipDismissListener(callback: (()->Unit)? = null) {
-        this.bodyWindow.setOnDismissListener {
-            this@AndesTooltip.dismiss()
-            callback?.invoke()
-        }
-    }
-
-    fun setOnAndesTooltipOutsideTouchListener(callback: (()->Unit)? = null) {
-        this.bodyWindow.setTouchInterceptor(
-                object : View.OnTouchListener {
-                    override fun onTouch(view: View, event: MotionEvent): Boolean {
-                        if (event.action == MotionEvent.ACTION_OUTSIDE) {
-                                this@AndesTooltip.dismiss()
-                            callback?.invoke()
-                            return true
-                        }
-                        return false
-                    }
-                }
-        )
-    }
-
-    /** gets measured width size of the AndesTooltip popup. TODO AJUSTAR CON ANCHO MAXIMO ACORDADO*/
-    internal fun getMeasuredWidth(): Int {
-        val displayWidth = context.displaySize().x
-        return when {
-            container.root.measuredWidth > displayWidth -> displayWidth
-            else -> this.container.root.measuredWidth
-        }
-    }
-
-    /** gets measured height size of the AndesTooltip popup. */
-    internal fun getMeasuredHeight(): Int {
-        return this.container.root.measuredHeight
-    }
-
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onPause(){
         onDestroy()
     }
 
-    /** dismiss automatically when lifecycle owner is destroyed. */
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
         this.destroyed = true
         this.bodyWindow.dismiss()
+    }
+
+
+    override lateinit var radiusLayout: RadiusLayout
+    override lateinit var frameLayoutContainer: FrameLayout
+
+    override val bodyWindowHeight: Int
+        get() = bodyWindow.height
+
+    override val bodyWindowWidth: Int
+        get() = bodyWindow.width
+
+    override val displaySizeX: Int
+        get() = context.displaySize().x
+
+    override val displaySizeY: Int
+        get() = context.displaySize().y
+
+    override val tooltipMeasuredWidth: Int
+        get() = container.root.measuredWidth
+
+    override val tooltipMeasuredHeight: Int
+        get() = container.root.measuredHeight
+
+    override val paddingWithArrow: Int
+        get() = context.resources.getDimensionPixelOffset(R.dimen.andes_tooltip_padding_with_arrow)
+
+    override val arrowImageInnerPadding: Int
+        get() = context.resources.getDimensionPixelOffset(R.dimen.andes_tooltip_arrow_inner_margin)
+
+    override val arrowWidth: Int
+        get() = context.resources.getDimensionPixelOffset(R.dimen.andes_tooltip_arrow_width)
+
+    override val arrowHeight: Int
+        get() = context.resources.getDimensionPixelOffset(R.dimen.andes_tooltip_arrow_height)
+
+    override val arrowBorder: Int
+        get() = context.resources.getDimensionPixelOffset(R.dimen.andes_tooltip_arrow_border)
+
+    override val elevation: Int
+        get() = context.resources.getDimensionPixelOffset(R.dimen.andes_tooltip_elevation)
+
+    override fun showDropDown(target: View, xOff: Int, yOff: Int, locationConfig: AndesTooltipLocationConfig){
+        this.isShowing = true
+        var attrs = andesTooltipAttrs
+
+        bodyWindow.showAsDropDown(target, xOff, yOff)
+
+        if (locationConfig.mLocation != andesTooltipLocationConfigRequired.mLocation){
+            attrs = andesTooltipAttrs.copy(tooltipLocation = locationConfig.mLocation)
+        }
+
+        val config = AndesTooltipConfigurationFactory.create(context, attrs)
+        initializeArrow(locationConfig)
+        setupComponents(config, locationConfig)
+        applyAndesTooltipAnimation()
     }
 
     companion object {
@@ -421,7 +428,5 @@ class AndesTooltip(val context: Context): LifecycleObserver {
         private val SECONDARY_ACTION_DEFAULT = null
         private val LINK_ACTION_DEFAULT = null
         private const val IS_DISMISSIBLE_DEFAULT = true
-        private const val DISMISS_WHEN_TOUCH_OUTSIDE = false
-        private const val ANCHOR_PADDING_RATIO = 2.5f
     }
 }

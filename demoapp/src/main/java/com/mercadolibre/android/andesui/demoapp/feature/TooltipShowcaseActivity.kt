@@ -15,7 +15,7 @@ import com.mercadolibre.android.andesui.tooltip.AndesTooltip
 import com.mercadolibre.android.andesui.tooltip.actions.AndesTooltipAction
 import com.mercadolibre.android.andesui.tooltip.actions.AndesTooltipLinkAction
 import com.mercadolibre.android.andesui.tooltip.style.AndesTooltipStyle
-import com.mercadolibre.android.andesui.tooltip.AndesTooltipLocation
+import com.mercadolibre.android.andesui.tooltip.location.AndesTooltipLocation
 import kotlinx.android.synthetic.main.andesui_tooltip_light_showcase.view.*
 
 class TooltipShowcaseActivity : AppCompatActivity() {

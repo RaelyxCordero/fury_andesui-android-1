@@ -26,10 +26,10 @@
           android:id="@+id/andes_tooltip_radio_layout"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          android:paddingStart="16dp"
-          android:paddingBottom="16dp"
-          android:paddingEnd="10dp"
-          android:paddingTop="10dp"
+          android:paddingStart="@dimen/andes_tooltip_padding_left"
+          android:paddingBottom="@dimen/andes_tooltip_padding_bottom"
+          android:paddingTop="@dimen/andes_tooltip_padding_top"
+          android:paddingEnd="@dimen/andes_tooltip_padding_right"
           tools:background="@android:color/darker_gray">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -41,9 +41,9 @@
               android:id="@+id/andes_tooltip_title"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_marginTop="6dp"
-              android:maxWidth="220dp"
-              app:layout_goneMarginBottom="2dp"
+              android:layout_marginTop="@dimen/andes_tooltip_title_margin_top"
+              android:maxWidth="@dimen/andes_tooltip_text_max_width_with_buttons"
+              app:layout_goneMarginBottom="@dimen/andes_tooltip_title_layout_gone_margin_bottom"
               app:layout_constraintHorizontal_bias="0.0"
               app:layout_constraintTop_toTopOf="parent"
               app:layout_constraintLeft_toLeftOf="parent"
@@ -56,18 +56,18 @@
               android:id="@+id/andes_tooltip_body"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_marginTop="4dp"
-              android:maxWidth="220dp"
+              android:layout_marginTop="@dimen/andes_tooltip_body_margin_top"
+              android:maxWidth="@dimen/andes_tooltip_text_max_width_with_buttons"
               app:layout_constraintHorizontal_bias="1.0"
               app:layout_constraintTop_toBottomOf="@id/andes_tooltip_title"
               app:layout_constraintLeft_toLeftOf="parent"
               tools:visibility="visible"
-              tools:text="Andes tooltip body Andes tooltip body Andes tooltip body Andes tooltip body Andes tooltip body Andes tooltip body" />
+              tools:text="@string/andes_tooltip_body" />
 
           <com.facebook.drawee.view.SimpleDraweeView
               android:id="@+id/andes_tooltip_dismiss"
-              android:layout_width="16dp"
-              android:layout_height="16dp"
+              android:layout_width="@dimen/andes_tooltip_dismiss_size"
+              android:layout_height="@dimen/andes_tooltip_dismiss_size"
               app:actualImageResource="@drawable/andes_ui_close_20"
               app:layout_constraintHorizontal_bias="1.0"
               app:layout_constraintTop_toTopOf="parent"
@@ -86,8 +86,8 @@
               android:id="@+id/andes_tooltip_primary_action"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_marginTop="16dp"
-              android:layout_marginEnd="4dp"
+              android:layout_marginTop="@dimen/andes_tooltip_buttons_margin_top"
+              android:layout_marginEnd="@dimen/andes_tooltip_main_button_margin_right"
               app:andesButtonHierarchy="loud"
               app:andesButtonSize="medium"
               app:andesButtonText="@string/andes_button_text"
@@ -104,7 +104,7 @@
               android:id="@+id/andes_tooltip_secondary_action"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_marginTop="16dp"
+              android:layout_marginTop="@dimen/andes_tooltip_buttons_margin_top"
               app:andesButtonHierarchy="quiet"
               app:andesButtonSize="medium"
               app:andesButtonText="@string/andes_button_text"
@@ -118,11 +118,11 @@
               android:id="@+id/andes_tooltip_link_action"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_marginTop="8dp"
+              android:layout_marginTop="@dimen/andes_tooltip_link_margin_top"
               android:textColor="@color/andes_accent_color_500"
               app:layout_constraintLeft_toLeftOf="parent"
               app:layout_constraintTop_toBottomOf="@+id/andes_tooltip_body"
-              tools:text="Link action"
+              tools:text="@string/andes_button_text"
               tools:visibility="visible"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -133,8 +133,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/andes_tooltip_arrow"
-        android:layout_width="20dp"
-        android:layout_height="14dp"
+        android:layout_width="@dimen/andes_tooltip_arrow_width"
+        android:layout_height="@dimen/andes_tooltip_arrow_height"
         android:scaleType="fitEnd"
         app:srcCompat="@drawable/andes_tooltip_arrow_svg" />
   </FrameLayout>

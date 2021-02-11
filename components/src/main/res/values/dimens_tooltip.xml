@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="andes_tooltip_padding_top">10dp</dimen>
+    <dimen name="andes_tooltip_padding_right">13dp</dimen>
+    <dimen name="andes_tooltip_padding_left">16dp</dimen>
+    <dimen name="andes_tooltip_padding_bottom">16dp</dimen>
+
+    <dimen name="andes_tooltip_text_max_width_with_buttons">220dp</dimen>
+    <dimen name="andes_tooltip_title_margin_top">6dp</dimen>
+    <dimen name="andes_tooltip_title_layout_gone_margin_bottom">2dp</dimen>
+
+    <dimen name="andes_tooltip_body_margin_top">4dp</dimen>
+
+    <dimen name="andes_tooltip_buttons_margin_top">16dp</dimen>
+    <dimen name="andes_tooltip_link_margin_top">8dp</dimen>
+    <dimen name="andes_tooltip_main_button_margin_right">4dp</dimen>
+
+    <dimen name="andes_tooltip_dismiss_margin_top">3dp</dimen>
+    <dimen name="andes_tooltip_dismiss_size">16dp</dimen>
+
+    <dimen name="andes_tooltip_arrow_width">20dp</dimen>
+    <dimen name="andes_tooltip_arrow_height">14dp</dimen>
+    <dimen name="andes_tooltip_arrow_border">10dp</dimen>
+    <dimen name="andes_tooltip_arrow_inner_margin">2dp</dimen>
+    <dimen name="andes_tooltip_padding_with_arrow">13dp</dimen>
+
+    <dimen name="andes_tooltip_elevation">2dp</dimen>
+    <dimen name="andes_tooltip_corner_radius">4dp</dimen>
+    <dimen name="andes_tooltip_alpha">1dp</dimen>
+</resources>

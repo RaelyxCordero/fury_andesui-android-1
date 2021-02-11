@@ -1,6 +1,5 @@
-package com.mercadolibre.android.andesui.tooltip
+package com.mercadolibre.android.andesui.tooltip.location
 
-/** AndesTooltipTipOrientation determines the orientation of the arrow. */
 enum class AndesTooltipLocation {
   BOTTOM,
   TOP,

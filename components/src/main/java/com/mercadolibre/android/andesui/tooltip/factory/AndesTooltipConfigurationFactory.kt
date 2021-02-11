@@ -10,7 +10,7 @@ import com.mercadolibre.android.andesui.color.AndesColor
 import com.mercadolibre.android.andesui.tooltip.actions.AndesTooltipAction
 import com.mercadolibre.android.andesui.tooltip.actions.AndesTooltipLinkAction
 import com.mercadolibre.android.andesui.tooltip.style.AndesTooltipStyle
-import com.mercadolibre.android.andesui.tooltip.AndesTooltipLocation
+import com.mercadolibre.android.andesui.tooltip.location.AndesTooltipLocation
 
 internal data class AndesTooltipConfiguration(
         val backgroundColor: AndesColor,
@@ -33,7 +33,8 @@ internal data class AndesTooltipConfiguration(
         val linkActionBackgroundColor: BackgroundColorConfig?,
         val linkActionTextColor: AndesColor?,
         val linkActionIsUnderlined: Boolean?,
-        val tooltipLocation: AndesTooltipLocation
+        val tooltipLocation: AndesTooltipLocation,
+        val isDynamicWidth: Boolean
 )
 
 @Suppress("TooManyFunctions")
@@ -62,7 +63,8 @@ internal object AndesTooltipConfigurationFactory {
                     linkActionBackgroundColor = resolveLinkActionBackgroundColor(style),
                     linkActionTextColor = resolveLinkActionTextColor(style),
                     linkActionIsUnderlined = resolveBodyLinkIsUnderlined(style),
-                    tooltipLocation = tooltipLocation
+                    tooltipLocation = tooltipLocation,
+                    isDynamicWidth = mainAction == null
 
             )
         }
