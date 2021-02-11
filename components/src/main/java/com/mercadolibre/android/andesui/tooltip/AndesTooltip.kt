@@ -44,6 +44,34 @@ import com.mercadolibre.android.andesui.typeface.getFontOrDefault
 
 class AndesTooltip(val context: Context): LifecycleObserver, AndesTooltipLocationInterface {
 
+    var title: String?
+        get() = andesTooltipAttrs.title
+        set(value) {
+            andesTooltipAttrs = andesTooltipAttrs.copy(title = value)
+            initTooltipTitle(createConfig(andesTooltipAttrs))
+        }
+
+    var body: String
+        get() = andesTooltipAttrs.body
+        set(value) {
+            andesTooltipAttrs = andesTooltipAttrs.copy(body = value)
+            initTooltipBody(createConfig(andesTooltipAttrs))
+        }
+
+    var isDismissible: Boolean
+        get() = andesTooltipAttrs.isDismissible
+        set(value) {
+            andesTooltipAttrs = andesTooltipAttrs.copy(isDismissible = value)
+            initDismiss(createConfig(andesTooltipAttrs))
+        }
+
+    var style: AndesTooltipStyle
+        get() = andesTooltipAttrs.style
+        set(value) {
+            andesTooltipAttrs = andesTooltipAttrs.copy(style = value)
+            setupComponents(createConfig(andesTooltipAttrs), andesTooltipLocationConfigRequired)
+        }
+
     private lateinit var andesTooltipAttrs: AndesTooltipAttrs
     private lateinit var andesTooltipLocationConfigRequired: AndesTooltipLocationConfig
 
