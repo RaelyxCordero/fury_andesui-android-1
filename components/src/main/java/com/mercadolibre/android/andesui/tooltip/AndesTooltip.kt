@@ -1,5 +1,6 @@
 package com.mercadolibre.android.andesui.tooltip
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
@@ -181,20 +182,6 @@ class AndesTooltip(val context: Context): LifecycleObserver, AndesTooltipLocatio
         }
     }
 
-    fun setOnAndesTooltipOutsideTouchListener(callback: (()->Unit)? = null) {
-        this.bodyWindow.setTouchInterceptor(
-                object : View.OnTouchListener {
-                    override fun onTouch(view: View, event: MotionEvent): Boolean {
-                        if (event.action == MotionEvent.ACTION_OUTSIDE) {
-                            this@AndesTooltip.dismiss()
-                            callback?.invoke()
-                            return true
-                        }
-                        return false
-                    }
-                }
-        )
-    }
 
     private fun initComponents(attrs: AndesTooltipAttrs){
         radiusLayout = container.andesTooltipRadioLayout
@@ -275,12 +262,19 @@ class AndesTooltip(val context: Context): LifecycleObserver, AndesTooltipLocatio
                 elevation = this@AndesTooltip.elevation.toFloat()
             }
             isClippingEnabled = false
+            setTouchInterceptor(
+                    object : View.OnTouchListener {
+                        @SuppressLint("ClickableViewAccessibility")
+                        override fun onTouch(view: View, event: MotionEvent): Boolean {
+                            if (event.action == MotionEvent.ACTION_OUTSIDE) {
+                                this@AndesTooltip.dismiss()
+                                return true
+                            }
+                            return false
+                        }
+                    }
+            )
         }
-    }
-
-    private fun initializeAndesTooltipListeners() {
-        setOnAndesTooltipDismissListener()
-        setOnAndesTooltipOutsideTouchListener()
     }
 
     private fun initializeAndesTooltipContent(config: AndesTooltipConfiguration, locationConfig: AndesTooltipLocationConfig) {
@@ -294,7 +288,6 @@ class AndesTooltip(val context: Context): LifecycleObserver, AndesTooltipLocatio
         initPrimaryAction(config)
         initSecondaryAction(config)
         initLinkAction(config)
-        initializeAndesTooltipListeners()
     }
 
     private fun initTooltipTitle(config: AndesTooltipConfiguration){
