@@ -110,7 +110,7 @@ internal val tooltipHasRightSpace = fun (tooltip: AndesTooltipLocationInterface,
   val targetX = target.getViewPointOnScreen().x
   val targetWidth = target.width
   val tooltipWidth = tooltip.bodyWindowWidth
-  val rightWall = tooltip.displaySizeY
+  val rightWall = tooltip.displaySizeX
 
   return targetX + targetWidth + tooltipWidth < rightWall
 }
