@@ -68,6 +68,7 @@
               android:id="@+id/andes_tooltip_dismiss"
               android:layout_width="@dimen/andes_tooltip_dismiss_size"
               android:layout_height="@dimen/andes_tooltip_dismiss_size"
+              android:layout_marginLeft="@dimen/andes_tooltip_dismiss_margin_left"
               app:actualImageResource="@drawable/andes_ui_close_20"
               app:layout_constraintHorizontal_bias="1.0"
               app:layout_constraintTop_toTopOf="parent"

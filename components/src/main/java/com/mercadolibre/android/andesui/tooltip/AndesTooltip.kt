@@ -333,7 +333,10 @@ class AndesTooltip(val context: Context): LifecycleObserver, AndesTooltipLocatio
                 hierarchy = config.primaryAction.hierarchy
                 config.primaryActionBackgroundColor?.let { primaryActionComponent.changeBackgroundColor(it) }
                 config.primaryActionTextColor?.let { primaryActionComponent.changeTextColor(it.colorInt(context)) }
-                setOnClickListener { config.primaryAction.onActionClicked(it, this@AndesTooltip) }
+                setOnClickListener {
+                    dismiss()
+                    config.primaryAction.onActionClicked(it, this@AndesTooltip)
+                }
                 visible(true)
             } else {
                 visible(false)
@@ -348,7 +351,10 @@ class AndesTooltip(val context: Context): LifecycleObserver, AndesTooltipLocatio
                 hierarchy = config.secondaryAction.hierarchy
                 config.secondaryActionBackgroundColor?.let { changeBackgroundColor(it) }
                 config.secondaryActionTextColor?.let { changeTextColor(it.colorInt(context)) }
-                setOnClickListener { config.secondaryAction.onActionClicked(it, this@AndesTooltip) }
+                setOnClickListener {
+                    dismiss()
+                    config.secondaryAction.onActionClicked(it, this@AndesTooltip)
+                }
                 visible(true)
             } else {
                 visible(false)
@@ -363,7 +369,10 @@ class AndesTooltip(val context: Context): LifecycleObserver, AndesTooltipLocatio
                 typeface = context.getFontOrDefault(R.font.andes_font_regular)
                 config.linkActionTextColor?.let { setTextColor(it.colorInt(context)) }
                 config.linkActionIsUnderlined?.let { paintFlags = Paint.UNDERLINE_TEXT_FLAG }
-                setOnClickListener { config.linkAction.onActionClicked(it, this@AndesTooltip) }
+                setOnClickListener {
+                    dismiss()
+                    config.linkAction.onActionClicked(it, this@AndesTooltip)
+                }
                 visible(true)
             } else {
                 visible(false)

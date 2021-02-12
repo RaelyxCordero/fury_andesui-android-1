@@ -16,6 +16,7 @@
     <dimen name="andes_tooltip_main_button_margin_right">4dp</dimen>
 
     <dimen name="andes_tooltip_dismiss_margin_top">3dp</dimen>
+    <dimen name="andes_tooltip_dismiss_margin_left">8dp</dimen>
     <dimen name="andes_tooltip_dismiss_size">16dp</dimen>
 
     <dimen name="andes_tooltip_arrow_width">20dp</dimen>
