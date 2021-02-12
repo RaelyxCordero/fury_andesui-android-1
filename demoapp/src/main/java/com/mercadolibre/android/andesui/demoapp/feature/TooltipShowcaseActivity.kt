@@ -8,9 +8,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.Toast
+import androidx.annotation.ArrayRes
 import com.mercadolibre.android.andesui.button.hierarchy.AndesButtonHierarchy
+import com.mercadolibre.android.andesui.checkbox.status.AndesCheckboxStatus
 import com.mercadolibre.android.andesui.demoapp.feature.utils.PageIndicator
 import com.mercadolibre.android.andesui.demoapp.R
+import com.mercadolibre.android.andesui.snackbar.AndesSnackbar
 import com.mercadolibre.android.andesui.tooltip.AndesTooltip
 import com.mercadolibre.android.andesui.tooltip.actions.AndesTooltipAction
 import com.mercadolibre.android.andesui.tooltip.actions.AndesTooltipLinkAction
@@ -19,6 +26,8 @@ import com.mercadolibre.android.andesui.tooltip.location.AndesTooltipLocation
 import kotlinx.android.synthetic.main.andesui_tooltip_light_showcase.view.*
 
 class TooltipShowcaseActivity : AppCompatActivity() {
+    private lateinit var andesTooltipToShow: AndesTooltip
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.andesui_showcase_main)
@@ -33,113 +42,239 @@ class TooltipShowcaseActivity : AppCompatActivity() {
         indicator.attach(viewPager)
 
         val adapter = viewPager.adapter as AndesShowcasePagerAdapter
-        addLoudButtons(adapter.views[0])
+        configInputs(adapter.views[0])
     }
 
-    private fun addLoudButtons(container: View) {
-        val andesTooltipMainAction2 = AndesTooltip(
-                context = this,
-                style = AndesTooltipStyle.LIGHT,
-                title = "My tooltip title",
-                body = "kajndxwdjnce",
-                tooltipLocation = AndesTooltipLocation.LEFT
-        )
-
-        container.andes_trigger_tooltip_centered.setOnClickListener {
-            andesTooltipMainAction2.show(it)
+    private fun configInputs(container: View){
+        container.body_text.text = "default body"
+        ArrayAdapter.createFromResource(
+                this,
+                R.array.tooltip_style_spinner,
+                android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            container.style_spinner.adapter = adapter
         }
-        val andesTooltipMainAction = AndesTooltip(
-                context = this,
-                style = AndesTooltipStyle.LIGHT,
-                title = "My tooltip title",
-                body = resources.getString(R.string.body_text),
-                tooltipLocation = AndesTooltipLocation.TOP,
-                mainAction = AndesTooltipAction(resources.getString(R.string.andes_card_link), AndesButtonHierarchy.LOUD){ _, tooltip ->
-                    tooltip.dismiss()
+
+        ArrayAdapter.createFromResource(
+                this,
+                R.array.tooltip_location_spinner,
+                android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            container.orientation_spinner.adapter = adapter
+        }
+
+        ArrayAdapter.createFromResource(
+                this,
+                R.array.tooltip_action_type_spinner,
+                android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            container.action_type_spinner.adapter = adapter
+            container.action_type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    when(position){
+                        0 -> {
+                            runOnUiThread {
+                                container.main_action_config.visibility = View.VISIBLE
+                                container.secondary_action_config.visibility = View.GONE
+                                container.link_action_text.visibility = View.GONE
+                            }
+
+                        }
+                        1 -> {
+                            runOnUiThread {
+                                container.main_action_config.visibility = View.VISIBLE
+                                container.secondary_action_config.visibility = View.VISIBLE
+                                container.link_action_text.visibility = View.GONE
+                            }
+                        }
+                        2 -> {
+                            runOnUiThread {
+                                container.main_action_config.visibility = View.GONE
+                                container.secondary_action_config.visibility = View.GONE
+                                container.link_action_text.visibility = View.VISIBLE
+                            }
+                        }
+                        3 -> {
+                            runOnUiThread {
+                                container.main_action_config.visibility = View.GONE
+                                container.secondary_action_config.visibility = View.GONE
+                                container.link_action_text.visibility = View.GONE
+                            }
+                        }
+                    }
                 }
-        )
 
-        container.andes_trigger_tooltip_top_left.setOnClickListener {
-            andesTooltipMainAction.show(it)
+            }
         }
 
-        val andesTooltipMainPlusSecondaryAction = AndesTooltip(
-                context = this,
-                style = AndesTooltipStyle.LIGHT,
-                title = "My tooltip title",
-                body = resources.getString(R.string.body_text),
-                tooltipLocation = AndesTooltipLocation.LEFT,
-                mainAction = AndesTooltipAction(resources.getString(R.string.andes_button_text), AndesButtonHierarchy.LOUD){ _, tooltip ->
-                    tooltip.dismiss()
-                },
-                secondaryAction = AndesTooltipAction(resources.getString(R.string.andes_card_link), AndesButtonHierarchy.QUIET){ _, tooltip ->
-                    tooltip.dismiss()
+        ArrayAdapter.createFromResource(
+                this,
+                R.array.tooltip_main_action_style_spinner,
+                android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            container.main_action_style_spinner.adapter = adapter
+        }
+
+        ArrayAdapter.createFromResource(
+                this,
+                R.array.tooltip_sec_action_style_spinner,
+                android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            container.secondary_action_style_spinner.adapter = adapter
+        }
+
+        updateAndesTooltip(container)
+
+        container.andes_trigger_tooltip_top_left.setOnClickListener (onTriggerClickListener)
+        container.andes_trigger_tooltip_top_right.setOnClickListener (onTriggerClickListener)
+        container.andes_trigger_tooltip_right.setOnClickListener (onTriggerClickListener)
+        container.andes_trigger_tooltip_left.setOnClickListener (onTriggerClickListener)
+        container.andes_trigger_tooltip_bottom_left.setOnClickListener (onTriggerClickListener)
+        container.andes_trigger_tooltip_bottom_right.setOnClickListener (onTriggerClickListener)
+        container.andes_trigger_tooltip_centered.setOnClickListener (onTriggerClickListener)
+        container.andes_centered_top_left.setOnClickListener (onTriggerClickListener)
+        container.andes_centered_top_right.setOnClickListener (onTriggerClickListener)
+        container.andes_centered_bottom_left.setOnClickListener (onTriggerClickListener)
+        container.andes_centered_bottom_right.setOnClickListener (onTriggerClickListener)
+
+        container.change_button.setOnClickListener {
+            updateAndesTooltip(container)
+        }
+    }
+
+    private val onTriggerClickListener = View.OnClickListener { andesTooltipToShow.show(it) }
+
+    private fun updateAndesTooltip(container: View) {
+
+        val builtTooltip: AndesTooltip
+
+        val title: String? = container.title_text.text.takeIf { !it.isNullOrEmpty() }
+        val body: String = if (!container.body_text.text.isNullOrEmpty()){container.body_text.text!!} else{"default body"}
+        val isDismissible = container.dismissable_checkbox.status == AndesCheckboxStatus.SELECTED
+
+        val location: AndesTooltipLocation =
+        when(container.orientation_spinner.selectedItem){
+            "top"-> AndesTooltipLocation.TOP
+            "bottom"-> AndesTooltipLocation.BOTTOM
+            "left"-> AndesTooltipLocation.LEFT
+            "right"-> AndesTooltipLocation.RIGHT
+            else-> AndesTooltipLocation.TOP
+        }
+        val style: AndesTooltipStyle =
+        when(container.style_spinner.selectedItem){
+            "light"-> AndesTooltipStyle.LIGHT
+            else-> AndesTooltipStyle.LIGHT
+        }
+
+        when(container.action_type_spinner.selectedItem){
+            "main action"-> {
+                val text:String = if (!container.primary_action_text.text.isNullOrEmpty()){
+                    container.primary_action_text.text!!
+                } else {
+                    container.primary_action_text.text = "default text"
+                    "default text"
                 }
-        )
+                builtTooltip = AndesTooltip(
+                        context = this,
+                        isDismissible = isDismissible,
+                        style = style,
+                        title = title,
+                        body = body,
+                        tooltipLocation = location,
+                        mainAction = buildMainAction(
+                                text,
+                                getHierarchyBySpinner(container.main_action_style_spinner, R.array.tooltip_main_action_style_spinner)
+                        )
+                )
 
-
-        container.andes_trigger_tooltip_top_right.setOnClickListener {
-            andesTooltipMainPlusSecondaryAction.show(it)
-        }
-
-        val andesTooltipLink = AndesTooltip(
-                context = this,
-                style = AndesTooltipStyle.LIGHT,
-                title = "My tooltip title",
-                body = resources.getString(R.string.body_text),
-                tooltipLocation = AndesTooltipLocation.RIGHT,
-                linkAction = AndesTooltipLinkAction(resources.getString(R.string.andes_card_link)){ _, tooltip ->
-                    tooltip.dismiss()
+            }
+            "main and second"-> {
+                val textPrimary:String = if (!container.primary_action_text.text.isNullOrEmpty()){
+                    container.primary_action_text.text!!
+                } else {
+                    container.primary_action_text.text = "default text"
+                    "default text"
                 }
-        )
-
-        container.andes_trigger_tooltip_left.setOnClickListener {
-            andesTooltipLink.show(it)
-        }
-
-        val andesTooltipNoAction = AndesTooltip(
-                context = this,
-                style = AndesTooltipStyle.LIGHT,
-                title = "My tooltip title",
-                body = resources.getString(R.string.body_text),
-                tooltipLocation = AndesTooltipLocation.LEFT
-        )
-        container.andes_trigger_tooltip_right.setOnClickListener {
-            andesTooltipNoAction.show(it)
-        }
-
-        val andesTooltipJustBody = AndesTooltip(
-                context = this,
-                style = AndesTooltipStyle.LIGHT,
-                body = resources.getString(R.string.body_text),
-                tooltipLocation = AndesTooltipLocation.BOTTOM
-        )
-        container.andes_trigger_tooltip_bottom_left.setOnClickListener {
-            andesTooltipJustBody.show(it)
-        }
-
-        val andesTooltipJustBody2 = AndesTooltip(
-                context = this,
-                style = AndesTooltipStyle.LIGHT,
-                body = resources.getString(R.string.body_text),
-                tooltipLocation = AndesTooltipLocation.BOTTOM,
-                isDismissible = false
-        )
-
-        val andesTooltipJustBody3 = AndesTooltip(
-                context = this,
-                style = AndesTooltipStyle.LIGHT,
-                title = "My tooltip title",
-                body = resources.getString(R.string.body_text),
-                tooltipLocation = AndesTooltipLocation.LEFT,
-                mainAction = AndesTooltipAction(resources.getString(R.string.andes_card_link), AndesButtonHierarchy.LOUD){ _, tooltip ->
-                    tooltip.dismiss()
+                val textSecondary:String = if (!container.secondary_action_text.text.isNullOrEmpty()){
+                    container.secondary_action_text.text!!
+                } else {
+                    container.secondary_action_text.text = "default text2"
+                    "default text2"
                 }
-        )
-        container.andes_trigger_tooltip_bottom_right.setOnClickListener {
-            andesTooltipJustBody3.show(it)
+                builtTooltip = AndesTooltip(
+                        context = this,
+                        isDismissible = isDismissible,
+                        style = style,
+                        title = title,
+                        body = body,
+                        tooltipLocation = location,
+                        mainAction = buildMainAction(
+                                textPrimary,
+                                getHierarchyBySpinner(container.main_action_style_spinner, R.array.tooltip_main_action_style_spinner)
+                        ),
+                        secondaryAction = buildMainAction(
+                                textSecondary,
+                                getHierarchyBySpinner(container.secondary_action_style_spinner, R.array.tooltip_sec_action_style_spinner)
+                        )
+                )
+            }
+            "link"-> {
+                val text:String = if (!container.link_action_text.text.isNullOrEmpty()){
+                    container.link_action_text.text!!
+                } else {
+                    container.link_action_text.text = "default text"
+                    "default text"
+                }
+                builtTooltip = AndesTooltip(
+                        context = this,
+                        isDismissible = isDismissible,
+                        style = style,
+                        title = title,
+                        body = body,
+                        tooltipLocation = location,
+                        linkAction = buildLinkAction(text)
+                )
+            }
+            else-> {
+                builtTooltip = AndesTooltip(
+                        context = this,
+                        isDismissible = isDismissible,
+                        style = style,
+                        title = title,
+                        body = body,
+                        tooltipLocation = location
+                )
+            }
         }
+        andesTooltipToShow = builtTooltip
+    }
 
+    private fun getHierarchyBySpinner(spinner: Spinner, @ArrayRes stringArrayRes: Int ): AndesButtonHierarchy {
+        return when (spinner.selectedItem){
+            "loud"-> AndesButtonHierarchy.LOUD
+            "quiet"-> AndesButtonHierarchy.QUIET
+            "transparent"-> AndesButtonHierarchy.TRANSPARENT
+            else-> AndesButtonHierarchy.QUIET
+        }
+    }
+
+    private fun buildMainAction(text: String, hierarchy: AndesButtonHierarchy): AndesTooltipAction{
+        return AndesTooltipAction(text, hierarchy){ _, _ ->
+            Toast.makeText(this, "$text was clicked" , Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun buildLinkAction(text: String): AndesTooltipLinkAction{
+        return AndesTooltipLinkAction(text){ _, _ ->
+            Toast.makeText(this, "$text was clicked" , Toast.LENGTH_SHORT).show()
+        }
     }
 
     class AndesShowcasePagerAdapter(private val context: Context) : PagerAdapter() {

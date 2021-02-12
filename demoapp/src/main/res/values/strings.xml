@@ -463,4 +463,32 @@
         <item>True</item>
     </string-array>
 
+    <string-array name="tooltip_style_spinner">
+        <item>light</item>
+    </string-array>
+
+    <string-array name="tooltip_location_spinner">
+        <item>top</item>
+        <item>bottom</item>
+        <item>right</item>
+        <item>left</item>
+    </string-array>
+
+    <string-array name="tooltip_action_type_spinner">
+        <item>main action</item>
+        <item>main and second</item>
+        <item>link</item>
+        <item>no action</item>
+    </string-array>
+
+    <string-array name="tooltip_main_action_style_spinner">
+        <item>loud</item>
+        <item>quiet</item>
+    </string-array>
+
+    <string-array name="tooltip_sec_action_style_spinner">
+        <item>quiet</item>
+        <item>transparent</item>
+    </string-array>
+
 </resources>
