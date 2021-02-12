@@ -27,20 +27,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupCoreComponents() {
-        andesui_carousel.visibility = View.GONE
-        andesui_coachmark.visibility = View.GONE
-        andesui_checkbox.visibility = View.GONE
-        andesui_radiobutton.visibility = View.GONE
-        andesui_tags.visibility = View.GONE
-        andesui_badges.visibility = View.GONE
-        andesui_textfield.visibility = View.GONE
-        andesui_thumbnail.visibility = View.GONE
-        andesui_dropdown.visibility = View.GONE
-        andesui_list.visibility = View.GONE
-        andesui_progress.visibility = View.GONE
-        andesui_bottom_sheet.visibility = View.GONE
-        andesui_date_picker.visibility = View.GONE
-
         andesui_tooltip.setOnClickListener {
             startActivity(SafeIntent(this, "meli://andes/tooltip"))
         }
